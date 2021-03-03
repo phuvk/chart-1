@@ -6,15 +6,15 @@ const supportedResolutions = ["1", "3", "5", "15", "30", "60", "120", "240", "D"
 
 const config = {
   supported_resolutions: supportedResolutions
-}; 
+};
 
 
-
+var count = 0;
 export default {
   onReady: cb => {
-  // console.log('=====onReady running')	
+    // console.log('=====onReady running')
     setTimeout(() => cb(config), 0)
-    
+
   },
   searchSymbols: (userInput, exchange, symbolType, onResultReadyCallback) => {
     for (var i = 0; i < data.length; ++i) {
@@ -58,27 +58,33 @@ export default {
       onSymbolResolvedCallback(symbol_stub)
       // console.log('Resolving that symbol....', symbol_stub)
     }, 0)
-    
-    
+
+
     // onResolveErrorCallback('Not feeling it today')
 
   },
+
   getBars: function(symbolInfo, resolution, from, to, onHistoryCallback, onErrorCallback, firstDataRequest) {
-    // console.log('=====getBars running')
+    count = count + 1;
+    console.log(count, 'count')
+    if (count > 5) return
+    console.log('=====getBars running')
     // console.log('function args',arguments)
     // console.log(`Requesting bars between ${new Date(from * 1000).toISOString()} and ${new Date(to * 1000).toISOString()}`)
     historyProvider.getBars(symbolInfo, resolution, from, to, firstDataRequest)
-    .then(bars => {
-      if (bars.length) {
-        onHistoryCallback(bars, {noData: false})
-      } else {
-        onHistoryCallback(bars, {noData: true})
-      }
-    }).catch(err => {
+        .then(bars => {
+          if (bars.length) {
+            console.log(bars, '1')
+            return onHistoryCallback(bars, {noData: false})
+          } else {
+            console.log(bars, '2')
+            return onHistoryCallback(bars, {noData: true})
+          }
+        }).catch(err => {
       // console.log({err})
       onErrorCallback(err)
     })
-
+    console.log(firstDataRequest, 'firstDataRequest')
   },
   subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {
     // console.log('=====subscribeBars runnning')
